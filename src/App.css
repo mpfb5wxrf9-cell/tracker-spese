@@ -39,6 +39,26 @@
   cursor: pointer;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
 }
 
 .tab:hover {
@@ -61,6 +81,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 12px;
 }
 
@@ -68,16 +89,23 @@
   margin-bottom: 0;
 }
 
+@media (max-width: 360px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
 .two-column {
   display: grid;
-  grid-template-columns: minmax(260px, 360px) 1fr;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
   gap: 20px;
   align-items: start;
 }
 
 @media (max-width: 800px) {
   .two-column {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -89,13 +117,13 @@
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
 @media (max-width: 800px) {
   .stat-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -134,13 +162,13 @@
 
 .chart-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   gap: 20px;
 }
 
 @media (max-width: 800px) {
   .chart-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -167,8 +195,15 @@
   gap: 12px;
 }
 
+@media (max-width: 380px) {
+  .form-row-split {
+    flex-direction: column;
+  }
+}
+
 .form-row-split > label {
   flex: 1;
+  min-width: 0;
 }
 
 label {
@@ -186,6 +221,8 @@ input, select {
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
+  width: 100%;
+  min-width: 0;
 }
 
 input:focus, select:focus {
@@ -245,7 +282,8 @@ input:focus, select:focus {
 .expense-item, .subscription-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   padding: 10px 4px;
   border-bottom: 1px solid var(--border);
 }
@@ -264,7 +302,7 @@ input:focus, select:focus {
 .expense-info, .subscription-info {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 140px;
   min-width: 0;
 }
 
@@ -350,6 +388,7 @@ input:focus, select:focus {
   align-items: flex-end;
   gap: 2px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .renewal-date {
