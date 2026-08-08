@@ -75,6 +75,7 @@
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px;
+  min-width: 0;
 }
 
 .card-header {
@@ -98,7 +99,7 @@
 
 .two-column {
   display: grid;
-  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  grid-template-columns: minmax(260px, 400px) minmax(0, 1fr);
   gap: 20px;
   align-items: start;
 }
