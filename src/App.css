@@ -223,7 +223,10 @@ input, select {
   background: var(--bg);
   color: var(--text);
   width: 100%;
+  max-width: 100%;
   min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 input:focus, select:focus {
