@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import type { BillingCycle, Category, Subscription } from "../types";
 import { CATEGORIES } from "../lib/categories";
 import { todayIso } from "../lib/format";
+import { DateFields } from "./DateFields";
 
 const BILLING_CYCLES: BillingCycle[] = ["Settimanale", "Mensile", "Annuale"];
 
@@ -77,16 +78,11 @@ export function SubscriptionForm({ onAdd }: Props) {
           </select>
         </label>
       </div>
-      <div className="form-row form-row-split">
-        <label>
-          Prossimo rinnovo
-          <input
-            type="date"
-            value={nextRenewal}
-            onChange={(e) => setNextRenewal(e.target.value)}
-            required
-          />
-        </label>
+      <div className="form-row">
+        <span className="field-label">Prossimo rinnovo</span>
+        <DateFields value={nextRenewal} onChange={setNextRenewal} />
+      </div>
+      <div className="form-row">
         <label>
           Categoria
           <select value={category} onChange={(e) => setCategory(e.target.value as Category)}>

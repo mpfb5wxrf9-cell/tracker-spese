@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import type { Category, Expense } from "../types";
 import { CATEGORIES, categorizeDescription } from "../lib/categories";
 import { todayIso } from "../lib/format";
+import { DateFields } from "./DateFields";
 
 interface Props {
   onAdd: (expense: Expense) => void;
@@ -59,7 +60,7 @@ export function ExpenseForm({ onAdd }: Props) {
           />
         </label>
       </div>
-      <div className="form-row form-row-split">
+      <div className="form-row">
         <label>
           Importo (€)
           <input
@@ -71,15 +72,10 @@ export function ExpenseForm({ onAdd }: Props) {
             required
           />
         </label>
-        <label>
-          Data
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-        </label>
+      </div>
+      <div className="form-row">
+        <span className="field-label">Data</span>
+        <DateFields value={date} onChange={setDate} />
       </div>
       <div className="form-row">
         <label>

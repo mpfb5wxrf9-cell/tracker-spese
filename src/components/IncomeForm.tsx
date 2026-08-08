@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import type { Income, IncomeCategory } from "../types";
 import { INCOME_CATEGORIES, categorizeIncomeDescription } from "../lib/income";
 import { todayIso } from "../lib/format";
+import { DateFields } from "./DateFields";
 
 interface Props {
   onAdd: (income: Income) => void;
@@ -59,7 +60,7 @@ export function IncomeForm({ onAdd }: Props) {
           />
         </label>
       </div>
-      <div className="form-row form-row-split">
+      <div className="form-row">
         <label>
           Importo (€)
           <input
@@ -71,15 +72,10 @@ export function IncomeForm({ onAdd }: Props) {
             required
           />
         </label>
-        <label>
-          Data
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-        </label>
+      </div>
+      <div className="form-row">
+        <span className="field-label">Data</span>
+        <DateFields value={date} onChange={setDate} />
       </div>
       <div className="form-row">
         <label>
