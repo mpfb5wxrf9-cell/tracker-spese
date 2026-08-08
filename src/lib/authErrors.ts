@@ -9,6 +9,7 @@ const MESSAGES: Record<string, string> = {
   "auth/popup-closed-by-user": "Accesso con Google annullato.",
   "auth/network-request-failed": "Errore di rete. Controlla la connessione.",
   "auth/too-many-requests": "Troppi tentativi. Riprova tra qualche minuto.",
+  "auth/unauthorized-domain": "Questo sito non è ancora autorizzato per il login Google (dominio non nella lista di Firebase).",
 };
 
 export function authErrorMessage(error: unknown): string {

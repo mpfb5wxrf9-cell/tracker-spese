@@ -40,10 +40,17 @@ export function AuthScreen() {
 
   async function handleGoogle() {
     setError(null);
-    // Redirects the whole page to Google's sign-in and back, rather than a
-    // popup: popups are unreliable on iOS Safari (they can be closed
-    // immediately, especially when the app is installed to the home screen).
-    await signInWithRedirect(auth, googleProvider);
+    try {
+      // Redirects the whole page to Google's sign-in and back, rather than a
+      // popup: popups are unreliable on iOS Safari (they can be closed
+      // immediately, especially when the app is installed to the home screen).
+      await signInWithRedirect(auth, googleProvider);
+    } catch (err) {
+      // Only reachable if the redirect itself couldn't start (e.g. this
+      // domain isn't in Firebase's authorized domains list) - a successful
+      // redirect navigates away before this line would run.
+      setError(authErrorMessage(err));
+    }
   }
 
   return (
