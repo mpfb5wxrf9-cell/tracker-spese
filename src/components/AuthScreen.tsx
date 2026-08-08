@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import {
   createUserWithEmailAndPassword,
+  getRedirectResult,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
 } from "firebase/auth";
 import { auth, googleProvider } from "../lib/firebase";
 import { authErrorMessage } from "../lib/authErrors";
@@ -13,6 +14,12 @@ export function AuthScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Picks up errors from a signInWithRedirect flow (e.g. the user cancelled
+  // on Google's side) once the app reloads after coming back from Google.
+  useEffect(() => {
+    getRedirectResult(auth).catch((err) => setError(authErrorMessage(err)));
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -33,14 +40,10 @@ export function AuthScreen() {
 
   async function handleGoogle() {
     setError(null);
-    setSubmitting(true);
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (err) {
-      setError(authErrorMessage(err));
-    } finally {
-      setSubmitting(false);
-    }
+    // Redirects the whole page to Google's sign-in and back, rather than a
+    // popup: popups are unreliable on iOS Safari (they can be closed
+    // immediately, especially when the app is installed to the home screen).
+    await signInWithRedirect(auth, googleProvider);
   }
 
   return (
