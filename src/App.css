@@ -413,3 +413,96 @@ input:focus, select:focus {
   background: var(--warning-bg);
   border-color: var(--warning-border);
 }
+
+/* Auth */
+
+.auth-screen {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.auth-form .app-subtitle {
+  margin-bottom: 8px;
+}
+
+.auth-form .form-row label {
+  text-align: left;
+}
+
+.auth-error {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.btn-google {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-google:hover {
+  background: var(--bg);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--accent-strong);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.app-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.user-email {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.btn-signout {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-signout:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}

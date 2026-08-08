@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { signOut } from "firebase/auth";
 import "./App.css";
 import type { Expense, Income, Subscription } from "./types";
-import { useLocalStorage } from "./hooks/useLocalStorage";
+import { auth } from "./lib/firebase";
+import { useAuth } from "./hooks/useAuth";
+import { useFirestoreCollection } from "./hooks/useFirestoreCollection";
+import { AuthScreen } from "./components/AuthScreen";
 import { Dashboard } from "./components/Dashboard";
 import { ExpenseForm } from "./components/ExpenseForm";
 import { ExpenseList } from "./components/ExpenseList";
@@ -20,41 +24,35 @@ const TABS: Array<{ id: Tab; label: string }> = [
 ];
 
 function App() {
-  const [expenses, setExpenses] = useLocalStorage<Expense[]>("tracker-spese:expenses", []);
-  const [incomes, setIncomes] = useLocalStorage<Income[]>("tracker-spese:incomes", []);
-  const [subscriptions, setSubscriptions] = useLocalStorage<Subscription[]>(
-    "tracker-spese:subscriptions",
-    [],
-  );
+  const { user, loading } = useAuth();
+  const uid = user?.uid;
+
+  const { items: expenses, add: addExpense, remove: deleteExpense } =
+    useFirestoreCollection<Expense>(uid, "expenses");
+  const { items: incomes, add: addIncome, remove: deleteIncome } =
+    useFirestoreCollection<Income>(uid, "incomes");
+  const { items: subscriptions, add: addSubscription, remove: deleteSubscription } =
+    useFirestoreCollection<Subscription>(uid, "subscriptions");
+
   const [tab, setTab] = useState<Tab>("dashboard");
 
-  function addExpense(expense: Expense) {
-    setExpenses((prev) => [expense, ...prev]);
+  if (loading) {
+    return null;
   }
 
-  function deleteExpense(id: string) {
-    setExpenses((prev) => prev.filter((e) => e.id !== id));
-  }
-
-  function addIncome(income: Income) {
-    setIncomes((prev) => [income, ...prev]);
-  }
-
-  function deleteIncome(id: string) {
-    setIncomes((prev) => prev.filter((i) => i.id !== id));
-  }
-
-  function addSubscription(subscription: Subscription) {
-    setSubscriptions((prev) => [subscription, ...prev]);
-  }
-
-  function deleteSubscription(id: string) {
-    setSubscriptions((prev) => prev.filter((s) => s.id !== id));
+  if (!user) {
+    return <AuthScreen />;
   }
 
   return (
     <div className="app">
       <header className="app-header">
+        <div className="app-header-row">
+          <span className="user-email">{user.email}</span>
+          <button type="button" className="btn-signout" onClick={() => signOut(auth)}>
+            Esci
+          </button>
+        </div>
         <h1>Tracker Spese</h1>
         <p className="app-subtitle">Spese, grafici mensili e abbonamenti in un unico posto</p>
       </header>
