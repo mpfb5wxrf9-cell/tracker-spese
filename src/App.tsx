@@ -6,6 +6,7 @@ import { auth } from "./lib/firebase";
 import { useAuth } from "./hooks/useAuth";
 import { useFirestoreCollection } from "./hooks/useFirestoreCollection";
 import { AuthScreen } from "./components/AuthScreen";
+import { VerifyEmailScreen } from "./components/VerifyEmailScreen";
 import { Dashboard } from "./components/Dashboard";
 import { ExpenseForm } from "./components/ExpenseForm";
 import { ExpenseList } from "./components/ExpenseList";
@@ -24,7 +25,7 @@ const TABS: Array<{ id: Tab; label: string }> = [
 ];
 
 function App() {
-  const { user, loading } = useAuth();
+  const { user, loading, emailVerified, refreshEmailVerified } = useAuth();
   const uid = user?.uid;
 
   const { items: expenses, add: addExpense, remove: deleteExpense } =
@@ -42,6 +43,10 @@ function App() {
 
   if (!user) {
     return <AuthScreen />;
+  }
+
+  if (!emailVerified) {
+    return <VerifyEmailScreen user={user} onCheckVerified={refreshEmailVerified} />;
   }
 
   return (

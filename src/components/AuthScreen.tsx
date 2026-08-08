@@ -1,24 +1,11 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import {
   createUserWithEmailAndPassword,
-  getRedirectResult,
+  sendEmailVerification,
   signInWithEmailAndPassword,
-  signInWithRedirect,
 } from "firebase/auth";
-import { auth, googleProvider } from "../lib/firebase";
+import { auth } from "../lib/firebase";
 import { authErrorMessage } from "../lib/authErrors";
-
-// iOS home-screen "standalone" web apps don't reliably return from a
-// Google OAuth redirect (the pending sign-in state can be lost when
-// Safari hands control back to the installed app shell), so Google
-// sign-in is offered as a link that opens in real Safari instead.
-function isStandalone(): boolean {
-  if (typeof window === "undefined") return false;
-  return (
-    (window.navigator as Navigator & { standalone?: boolean }).standalone === true ||
-    window.matchMedia("(display-mode: standalone)").matches
-  );
-}
 
 export function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -26,13 +13,6 @@ export function AuthScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [standalone] = useState(isStandalone);
-
-  // Picks up errors from a signInWithRedirect flow (e.g. the user cancelled
-  // on Google's side) once the app reloads after coming back from Google.
-  useEffect(() => {
-    getRedirectResult(auth).catch((err) => setError(authErrorMessage(err)));
-  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -42,27 +22,13 @@ export function AuthScreen() {
       if (mode === "login") {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const credential = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(credential.user);
       }
     } catch (err) {
       setError(authErrorMessage(err));
     } finally {
       setSubmitting(false);
-    }
-  }
-
-  async function handleGoogle() {
-    setError(null);
-    try {
-      // Redirects the whole page to Google's sign-in and back, rather than a
-      // popup: popups are unreliable on iOS Safari (they can be closed
-      // immediately, especially when the app is installed to the home screen).
-      await signInWithRedirect(auth, googleProvider);
-    } catch (err) {
-      // Only reachable if the redirect itself couldn't start (e.g. this
-      // domain isn't in Firebase's authorized domains list) - a successful
-      // redirect navigates away before this line would run.
-      setError(authErrorMessage(err));
     }
   }
 
@@ -105,25 +71,6 @@ export function AuthScreen() {
         <button type="submit" className="btn-primary" disabled={submitting}>
           {mode === "login" ? "Accedi" : "Registrati"}
         </button>
-
-        {standalone ? (
-          <p className="auth-note">
-            L'accesso con Google non è affidabile nell'app installata su iPhone.{" "}
-            <a href={window.location.href} target="_blank" rel="noopener noreferrer">
-              Apri questo link in Safari
-            </a>{" "}
-            per usarlo, oppure accedi con email e password qui sopra.
-          </p>
-        ) : (
-          <button
-            type="button"
-            className="btn-google"
-            onClick={handleGoogle}
-            disabled={submitting}
-          >
-            Continua con Google
-          </button>
-        )}
 
         <button
           type="button"
