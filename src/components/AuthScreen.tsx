@@ -8,12 +8,25 @@ import {
 import { auth, googleProvider } from "../lib/firebase";
 import { authErrorMessage } from "../lib/authErrors";
 
+// iOS home-screen "standalone" web apps don't reliably return from a
+// Google OAuth redirect (the pending sign-in state can be lost when
+// Safari hands control back to the installed app shell), so Google
+// sign-in is offered as a link that opens in real Safari instead.
+function isStandalone(): boolean {
+  if (typeof window === "undefined") return false;
+  return (
+    (window.navigator as Navigator & { standalone?: boolean }).standalone === true ||
+    window.matchMedia("(display-mode: standalone)").matches
+  );
+}
+
 export function AuthScreen() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [standalone] = useState(isStandalone);
 
   // Picks up errors from a signInWithRedirect flow (e.g. the user cancelled
   // on Google's side) once the app reloads after coming back from Google.
@@ -93,14 +106,24 @@ export function AuthScreen() {
           {mode === "login" ? "Accedi" : "Registrati"}
         </button>
 
-        <button
-          type="button"
-          className="btn-google"
-          onClick={handleGoogle}
-          disabled={submitting}
-        >
-          Continua con Google
-        </button>
+        {standalone ? (
+          <p className="auth-note">
+            L'accesso con Google non è affidabile nell'app installata su iPhone.{" "}
+            <a href={window.location.href} target="_blank" rel="noopener noreferrer">
+              Apri questo link in Safari
+            </a>{" "}
+            per usarlo, oppure accedi con email e password qui sopra.
+          </p>
+        ) : (
+          <button
+            type="button"
+            className="btn-google"
+            onClick={handleGoogle}
+            disabled={submitting}
+          >
+            Continua con Google
+          </button>
+        )}
 
         <button
           type="button"

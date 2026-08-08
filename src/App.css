@@ -452,6 +452,20 @@ input:focus, select:focus {
   font-size: 13px;
 }
 
+.auth-note {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.auth-note a {
+  color: var(--accent-strong);
+}
+
 .btn-google {
   background: var(--surface);
   color: var(--text);
