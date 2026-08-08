@@ -1,23 +1,27 @@
 import { useState } from "react";
 import "./App.css";
-import type { Expense, Subscription } from "./types";
+import type { Expense, Income, Subscription } from "./types";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { Dashboard } from "./components/Dashboard";
 import { ExpenseForm } from "./components/ExpenseForm";
 import { ExpenseList } from "./components/ExpenseList";
+import { IncomeForm } from "./components/IncomeForm";
+import { IncomeList } from "./components/IncomeList";
 import { SubscriptionForm } from "./components/SubscriptionForm";
 import { SubscriptionMonitor } from "./components/SubscriptionMonitor";
 
-type Tab = "dashboard" | "expenses" | "subscriptions";
+type Tab = "dashboard" | "expenses" | "income" | "subscriptions";
 
 const TABS: Array<{ id: Tab; label: string }> = [
   { id: "dashboard", label: "Dashboard" },
   { id: "expenses", label: "Spese" },
+  { id: "income", label: "Entrate" },
   { id: "subscriptions", label: "Abbonamenti" },
 ];
 
 function App() {
   const [expenses, setExpenses] = useLocalStorage<Expense[]>("tracker-spese:expenses", []);
+  const [incomes, setIncomes] = useLocalStorage<Income[]>("tracker-spese:incomes", []);
   const [subscriptions, setSubscriptions] = useLocalStorage<Subscription[]>(
     "tracker-spese:subscriptions",
     [],
@@ -30,6 +34,14 @@ function App() {
 
   function deleteExpense(id: string) {
     setExpenses((prev) => prev.filter((e) => e.id !== id));
+  }
+
+  function addIncome(income: Income) {
+    setIncomes((prev) => [income, ...prev]);
+  }
+
+  function deleteIncome(id: string) {
+    setIncomes((prev) => prev.filter((i) => i.id !== id));
   }
 
   function addSubscription(subscription: Subscription) {
@@ -61,12 +73,21 @@ function App() {
       </nav>
 
       <main className="app-main">
-        {tab === "dashboard" && <Dashboard expenses={expenses} subscriptions={subscriptions} />}
+        {tab === "dashboard" && (
+          <Dashboard expenses={expenses} incomes={incomes} subscriptions={subscriptions} />
+        )}
 
         {tab === "expenses" && (
           <div className="two-column">
             <ExpenseForm onAdd={addExpense} />
             <ExpenseList expenses={expenses} onDelete={deleteExpense} />
+          </div>
+        )}
+
+        {tab === "income" && (
+          <div className="two-column">
+            <IncomeForm onAdd={addIncome} />
+            <IncomeList incomes={incomes} onDelete={deleteIncome} />
           </div>
         )}
 

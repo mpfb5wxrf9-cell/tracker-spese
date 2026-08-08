@@ -20,6 +20,23 @@ export interface Expense {
   createdAt: string; // ISO datetime
 }
 
+export type IncomeCategory =
+  | "Stipendio"
+  | "Freelance"
+  | "Regalo"
+  | "Rimborso"
+  | "Investimenti"
+  | "Altro";
+
+export interface Income {
+  id: string;
+  description: string;
+  amount: number;
+  category: IncomeCategory;
+  date: string; // ISO yyyy-MM-dd
+  createdAt: string; // ISO datetime
+}
+
 export type BillingCycle = "Settimanale" | "Mensile" | "Annuale";
 
 export interface Subscription {

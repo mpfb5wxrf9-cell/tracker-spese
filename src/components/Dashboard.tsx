@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Expense, Subscription } from "../types";
+import type { Expense, Income, Subscription } from "../types";
 import { MonthlyChart } from "./MonthlyChart";
 import { CategoryChart } from "./CategoryChart";
 import { formatCurrency, monthKey } from "../lib/format";
@@ -7,10 +7,11 @@ import { totalMonthlyCost, upcomingRenewals } from "../lib/subscriptions";
 
 interface Props {
   expenses: Expense[];
+  incomes: Income[];
   subscriptions: Subscription[];
 }
 
-export function Dashboard({ expenses, subscriptions }: Props) {
+export function Dashboard({ expenses, incomes, subscriptions }: Props) {
   const currentMonthKey = monthKey(new Date().toISOString().slice(0, 10));
 
   const currentMonthExpenses = useMemo(
@@ -18,7 +19,14 @@ export function Dashboard({ expenses, subscriptions }: Props) {
     [expenses, currentMonthKey],
   );
 
+  const currentMonthIncomes = useMemo(
+    () => incomes.filter((i) => monthKey(i.date) === currentMonthKey),
+    [incomes, currentMonthKey],
+  );
+
   const currentMonthTotal = currentMonthExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const currentMonthIncomeTotal = currentMonthIncomes.reduce((sum, i) => sum + i.amount, 0);
+  const currentMonthBalance = currentMonthIncomeTotal - currentMonthTotal;
 
   const topCategory = useMemo(() => {
     const totals = new Map<string, number>();
@@ -43,8 +51,18 @@ export function Dashboard({ expenses, subscriptions }: Props) {
     <div className="dashboard">
       <div className="stat-grid">
         <div className="card stat-card">
+          <span className="stat-label">Entrate questo mese</span>
+          <span className="stat-value stat-positive">{formatCurrency(currentMonthIncomeTotal)}</span>
+        </div>
+        <div className="card stat-card">
           <span className="stat-label">Spese questo mese</span>
           <span className="stat-value">{formatCurrency(currentMonthTotal)}</span>
+        </div>
+        <div className="card stat-card">
+          <span className="stat-label">Saldo questo mese</span>
+          <span className={`stat-value ${currentMonthBalance >= 0 ? "stat-positive" : "stat-negative"}`}>
+            {formatCurrency(currentMonthBalance)}
+          </span>
         </div>
         <div className="card stat-card">
           <span className="stat-label">Categoria principale</span>

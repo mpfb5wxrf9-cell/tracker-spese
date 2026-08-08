@@ -89,7 +89,7 @@
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
@@ -118,6 +118,18 @@
 .stat-value-sm {
   font-size: 18px;
   font-weight: 600;
+}
+
+.stat-positive {
+  color: #2f9e5c;
+}
+
+.stat-negative {
+  color: var(--danger);
+}
+
+.income-amount {
+  color: #2f9e5c;
 }
 
 .chart-grid {
